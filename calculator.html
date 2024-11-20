@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura - Калькулятор ИМТ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7f6;
+            color: #333;
+        }
+        header {
+            background-color: #6a8d73;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .section {
+            padding: 40px 20px;
+            text-align: center;
+
+        }
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #6a8d73;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result, .advice {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .result {
+            background-color: #e3f2fd;
+        }
+        .advice {
+            background-color: #f1f8e9;
+        }
+   
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        footer a {
+            color: #8dbf8f;
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Aura</h1>
+        <p>Калькулятор индекса массы тела</p>
+    </header>
+<section class="section">
+    <h2>Что такое индекс массы тела (ИМТ)?</h2>
+        <p>И́ндекс ма́ссы те́ла — величина, позволяющая оценить степень соответствия массы человека и его роста и тем самым косвенно судить о том, является ли масса недостаточной, нормальной или избыточной.</p>
+</section>
+
+    <main>
+        <h2>Калькулятор ИМТ</h2>
+        <form id="bmi-form">
+            <div class="form-group">
+                <label for="gender">Пол:</label>
+                <select id="gender" required>
+                    <option value="" disabled selected>Выберите пол</option>
+                    <option value="male">Мужчина</option>
+                    <option value="female">Женщина</option>
+                </select>
+ 		 <label for="age">Возраст (годы):</label>
+ 	 	 <input type="number" id="age" required min="18" max="100">
+	
+            </div>
+            <div class="form-group">
+                <label for="weight">Вес (кг):</label>
+                <input type="number" id="weight" step="0.1" required>
+            </div>
+            <div class="form-group">
+                <label for="height">Рост (см):</label>
+                <input type="number" id="height" step="0.1" required>
+            </div>
+            <button type="button" onclick="calculateBMI()">Рассчитать ИМТ</button>
+        </form>
+        <div class="result" id="bmi-result" style="display:none;">
+            <h3>Ваш ИМТ:</h3>
+            <p id="bmi-value"></p>
+        </div>
+        <div class="advice" id="bmi-advice" style="display:none;">
+            <h3>Рекомендации:</h3>
+            <p id="advice-text"></p>
+        </div>
+    </main>
+
+    <script>
+        function calculateBMI() {
+            const gender = document.getElementById('gender').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value) / 100; // перевод см в метры
+
+            if (!gender || isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
+                alert('Пожалуйста, заполните все поля корректно.');
+                return;
+            }
+
+            const bmi = (weight / (height * height)).toFixed(1);
+            document.getElementById('bmi-value').textContent = `Ваш ИМТ: ${bmi}`;
+            document.getElementById('bmi-result').style.display = 'block';
+
+            const advice = getAdvice(bmi, gender);
+            document.getElementById('advice-text').textContent = advice;
+            document.getElementById('bmi-advice').style.display = 'block';
+        }
+
+        function getAdvice(bmi, gender) {
+            if (bmi < 18.5) {
+                return gender === "male" 
+                    ? "У вас недостаточный вес. Рекомендуется увеличить калорийность питания, добавляя белки и сложные углеводы."
+                    : "У вас недостаточный вес. Обратите внимание на питательные продукты: орехи, авокадо, нежирное мясо.";
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                return gender === "male" 
+                    ? "У вас нормальный вес. Поддерживайте активный образ жизни и сбалансированное питание."
+                    : "Ваш вес в норме. Придерживайтесь текущего режима питания и регулярной активности.";
+            } else if (bmi >= 25 && bmi < 29.9) {
+                return gender === "male" 
+                    ? "У вас избыточный вес. Уделите внимание тренировкам и снижению калорийности питания."
+                    : "У вас избыточный вес. Постарайтесь уменьшить порции и добавьте больше овощей в рацион.";
+            } else {
+                return gender === "male" 
+                    ? "У вас ожирение. Рекомендуется консультация с врачом и разработка программы похудения."
+                    : "У вас ожирение. Обратитесь к специалисту для составления плана питания и тренировок.";
+            }
+        }
+    </script>
+<footer>
+    <p>&copy; 2024 Aura.</p>
+    <p><a href="file:///C:/Users/%D0%A2%D0%B0%D0%BD%D1%8F/Desktop/project%201/forma.htm">Обратная связь</a></p>
+</footer>
+
+</body>
+</html>
+
